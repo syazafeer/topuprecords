@@ -4,12 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AF ASCEND TRADING - Internal System</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS untuk Dashboard -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2pdf.js Library (Untuk jana PDF Premium) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body { background-color: #0d1117; }
+
+        /* ====== GAYA CSS KHAS UNTUK CETAKAN PDF PREMIUM ====== */
+        @media print {
+            /* Sembunyikan semua elemen sistem/dashboard semasa mencetak */
+            body *, header, main, footer, #waModal {
+                display: none !important;
+            }
+            /* Hanya paparkan zon resit sahaja */
+            #premiumPrintReceipt, #premiumPrintReceipt * {
+                display: block !important;
+            }
+            #premiumPrintReceipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background-color: #ffffff !important;
+                color: #1a202c !important;
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                padding: 20px !important;
+                box-sizing: border-box;
+            }
+            .flex-print {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+            .table-print {
+                display: table !important;
+                width: 100% !important;
+            }
+            .tr-print {
+                display: table-row !important;
+            }
+            .td-print {
+                display: table-cell !important;
+                padding: 6px 0 !important;
+            }
+            .th-print-item {
+                display: table-cell !important;
+                padding: 10px !important;
+                background-color: #f7fafc !important;
+                border-top: 1px solid #e2e8f0 !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                font-weight: bold !important;
+            }
+            .td-print-item {
+                display: table-cell !important;
+                padding: 12px 10px !important;
+                border-bottom: 1px solid #edf2f7 !important;
+            }
+            .text-right-print {
+                text-align: right !important;
+            }
+        }
     </style>
 </head>
 <body class="text-gray-200 font-sans flex flex-col min-h-screen justify-between items-center p-6 relative">
@@ -134,95 +187,69 @@
                 </div>
 
                 <button type="submit" id="saveBtn" class="w-full mt-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-gray-950 font-bold py-3 rounded-lg hover:from-emerald-400 hover:to-teal-500 transition-all shadow-lg">
-                    Simpan & Jana PDF Premium
+                    Simpan & Buka PDF Cetakan
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- TEMPLATE INVOIS/RESIT PREMIUM (DISEMBUNYIKAN DARIPADA SKRIN, HANYA DIBACA OLEH PENJANA PDF) -->
-    <div class="absolute top-[-9999px] left-[-9999px]">
-        <div id="premiumReceiptTemplate" style="width: 550px; padding: 30px; background-color: #ffffff; color: #1a202c; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-            <!-- Header Resit -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-b: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
-                <div>
-                    <h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #b45309; letter-spacing: 1px;">AF ASCEND TRADING</h1>
-                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #718096; font-weight: 500;">No. Pendaftaran: CA0421557X</p>
-                </div>
-                <div style="text-align: right;">
-                    <span style="background-color: #d1fae5; color: #065f46; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase;">RESIT RASMI</span>
-                </div>
+    <!-- ZON RESIT PREMIUM (HANYA MUNCUL BILA NAK SAVE PDF/PRINT SAHAJA) -->
+    <div id="premiumPrintReceipt" class="hidden">
+        <div class="flex-print" style="border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+            <div>
+                <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #b45309; letter-spacing: 0.5px;">AF ASCEND TRADING</h1>
+                <p style="margin: 2px 0 0 0; font-size: 11px; color: #718096; font-weight: 500;">No. Pendaftaran: CA0421557X</p>
             </div>
+            <div class="text-right-print">
+                <span style="background-color: #d1fae5; color: #065f46; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 9999px; text-transform: uppercase;">RESIT RASMI</span>
+            </div>
+        </div>
 
-            <!-- Maklumat Transaksi -->
-            <table style="width: 100%; font-size: 12px; margin-bottom: 25px; border-collapse: collapse;">
-                <tr>
-                    <td style="padding: 4px 0; color: #718096; width: 35%;">Nama Pelanggan</td>
-                    <td style="padding: 4px 0; font-weight: 600; color: #2d3748;" id="pdfNama">-</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px 0; color: #718096;">No. WhatsApp</td>
-                    <td style="padding: 4px 0; font-weight: 600; color: #2d3748;" id="pdfFon">-</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px 0; color: #718096;">Tarikh Transaksi</td>
-                    <td style="padding: 4px 0; font-weight: 600; color: #2d3748;" id="pdfTarikh">-</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px 0; color: #718096;">Kaedah Pembayaran</td>
-                    <td style="padding: 4px 0; font-weight: 600; color: #2d3748;" id="pdfBayar">-</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px 0; color: #718096;">Rujukan / Fail Resit</td>
-                    <td style="padding: 4px 0; font-weight: 500; color: #4a5568; font-size: 11px; word-break: break-all;" id="pdfRef">-</td>
-                </tr>
-            </table>
+        <div class="table-print" style="margin-bottom: 25px;">
+            <div class="tr-print"><div class="td-print" style="color: #718096; width: 35%;">Nama Pelanggan</div><div class="td-print" style="font-weight: 600;" id="pdfNama">-</div></div>
+            <div class="tr-print"><div class="td-print" style="color: #718096;">No. WhatsApp</div><div class="td-print" style="font-weight: 600;" id="pdfFon">-</div></div>
+            <div class="tr-print"><div class="td-print" style="color: #718096;">Tarikh Transaksi</div><div class="td-print" style="font-weight: 600;" id="pdfTarikh">-</div></div>
+            <div class="tr-print"><div class="td-print" style="color: #718096;">Kaedah Pembayaran</div><div class="td-print" style="font-weight: 600;" id="pdfBayar">-</div></div>
+            <div class="tr-print"><div class="td-print" style="color: #718096;">Rujukan Transaksi</div><div class="td-print" style="color: #4a5568;" id="pdfRef">-</div></div>
+        </div>
 
-            <!-- Jadual Item Premium -->
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px;">
-                <thead>
-                    <tr style="background-color: #f7fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
-                        <th style="text-align: left; padding: 10px; color: #4a5568; font-weight: 700;">DESKRIPSI SERVIS</th>
-                        <th style="text-align: right; padding: 10px; color: #4a5568; font-weight: 700;">JUMLAH (RM)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid #edf2f7;">
-                        <td style="padding: 12px 10px; color: #2d3748;">
-                            <div style="font-weight: 600;" id="pdfItemNama">Topup Celcom</div>
-                            <div style="font-size: 10px; color: #a0aec0; margin-top: 2px;">Penambahan nilai kredit telefon mudah alih</div>
-                        </td>
-                        <td style="text-align: right; padding: 12px 10px; font-weight: 600; color: #2d3748;" id="pdfHargaItem">RM 0.00</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #edf2f7;">
-                        <td style="padding: 12px 10px; color: #2d3748;">
-                            <div style="font-weight: 600;">Fee Caj Servis Gateway</div>
-                            <div style="font-size: 10px; color: #a0aec0; margin-top: 2px;">Caj pengurusan dan pemprosesan transaksi digital</div>
-                        </td>
-                        <td style="text-align: right; padding: 12px 10px; font-weight: 600; color: #2d3748;" id="pdfHargaFee">RM 0.00</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="table-print" style="margin-bottom: 25px;">
+            <div class="tr-print">
+                <div class="th-print-item">DESKRIPSI SERVIS</div>
+                <div class="th-print-item text-right-print" style="width: 30%;">JUMLAH (RM)</div>
+            </div>
+            <div class="tr-print">
+                <div class="td-print-item">
+                    <div style="font-weight: 600;" id="pdfItemNama">Topup Celcom</div>
+                    <div style="font-size: 10px; color: #a0aec0; margin-top: 2px;">Penambahan nilai kredit telefon mudah alih</div>
+                </div>
+                <div class="td-print-item text-right-print" style="font-weight: 600;" id="pdfHargaItem">RM 0.00</div>
+            </div>
+            <div class="tr-print">
+                <div class="td-print-item">
+                    <div style="font-weight: 600;">Fee Caj Servis Gateway</div>
+                    <div style="font-size: 10px; color: #a0aec0; margin-top: 2px;">Caj pengurusan dan pemprosesan transaksi digital</div>
+                </div>
+                <div class="td-print-item text-right-print" style="font-weight: 600;" id="pdfHargaFee">RM 0.00</div>
+            </div>
+        </div>
 
-            <!-- Pengiraan Total Terakhir -->
-            <div style="display: flex; justify-content: flex-end;">
-                <div style="width: 220px; background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #92400e; margin-bottom: 4px;">
-                        <span>Subtotal:</span>
-                        <span id="pdfSubtotal">RM 0.00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: #78350f; border-top: 1px dashed #fcd34d; padding-top: 6px; margin-top: 4px;">
-                        <span>TOTAL BERSIH:</span>
-                        <span id="pdfTotalBersih">RM 0.00</span>
-                    </div>
+        <div class="flex-print" style="justify-content: flex-end; margin-top: 20px;">
+            <div style="width: 240px; background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin-left: auto;">
+                <div class="flex-print" style="font-size: 11px; color: #92400e; margin-bottom: 4px;">
+                    <span>Subtotal:</span>
+                    <span id="pdfSubtotal" style="font-weight: bold;">RM 0.00</span>
+                </div>
+                <div class="flex-print" style="font-size: 14px; font-weight: 800; color: #78350f; border-top: 1px dashed #fcd34d; padding-top: 6px; margin-top: 4px;">
+                    <span>TOTAL BERSIH:</span>
+                    <span id="pdfTotalBersih">RM 0.00</span>
                 </div>
             </div>
+        </div>
 
-            <!-- Footer Dokumen -->
-            <div style="text-align: center; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 15px; font-size: 10px; color: #a0aec0;">
-                <p style="margin: 0; font-weight: 600;">Terima kasih kerana memilih perkhidmatan AF Ascend Trading.</p>
-                <p style="margin: 4px 0 0 0;">Ini adalah dokumen cetakan komputer yang sah, tiada tandatangan diperlukan.</p>
-            </div>
+        <div style="text-align: center; margin-top: 60px; border-top: 1px solid #e2e8f0; padding-top: 15px; font-size: 10px; color: #a0aec0;">
+            <p style="margin: 0; font-weight: 600;">Terima kasih kerana memilih perkhidmatan AF Ascend Trading.</p>
+            <p style="margin: 4px 0 0 0;">Ini adalah dokumen cetakan komputer yang sah, tiada tandatangan diperlukan.</p>
         </div>
     </div>
 
@@ -231,8 +258,8 @@
         <div class="bg-[#161b22] border border-emerald-800 w-full max-w-sm rounded-2xl p-6 text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 bg-emerald-950 border border-emerald-500 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-xl font-bold">✓</div>
             <div>
-                <h3 class="text-lg font-bold text-gray-100">Resit PDF Siap Dijana!</h3>
-                <p class="text-xs text-gray-400 mt-1">Sila hantar fail PDF yang di-download kepada pelanggan.</p>
+                <h3 class="text-lg font-bold text-gray-100">Transaksi Berjaya Di-rekod!</h3>
+                <p class="text-xs text-gray-400 mt-1">Sila hantar fail PDF resit tadi kepada pelanggan anda.</p>
             </div>
             <div class="pt-2 space-y-2">
                 <button onclick="bukaWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
@@ -300,7 +327,7 @@
             kemaskiniKadInfo();
         }
 
-        // Handle Simpan Data + AUTO GENERATE PDF PREMIUM
+        // Handle Simpan Data + CETAKAN KEBANGSAAN KALIS SEKAT
         document.getElementById('recordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
@@ -334,10 +361,10 @@
             const totalBersihHitung = (parseFloat(inputJual) + parseFloat(inputFee)).toFixed(2);
 
             saveBtn.disabled = true;
-            saveBtn.innerText = "Menyimpan & Menjana PDF...";
+            saveBtn.innerText = "Menyimpan Ke Sheets...";
 
             try {
-                // 1. Suntik Data Masuk Template Premium Terlebih Dahulu
+                // 1. Masukkan data ke dalam zon resit cetakan
                 document.getElementById('pdfNama').innerText = namaCustomer;
                 document.getElementById('pdfFon').innerText = "+" + rawPhone;
                 document.getElementById('pdfTarikh').innerText = tkh;
@@ -349,20 +376,7 @@
                 document.getElementById('pdfSubtotal').innerText = "RM " + totalBersihHitung;
                 document.getElementById('pdfTotalBersih').innerText = "RM " + totalBersihHitung;
 
-                // 2. Lancarkan Pustaka JANA PDF & AUTO DOWNLOAD
-                const elementTemplate = document.getElementById('premiumReceiptTemplate');
-                const pdfOptions = {
-                    margin:       10,
-                    filename:     'Resit_' + namaCustomer.replace(/\s+/g, '_') + '_' + ("0" + hIni.getDate()).slice(-2) + ("0" + (hIni.getMonth() + 1)).slice(-2) + '.pdf',
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, logging: false },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-                
-                // Proses buat fail PDF di belakang tab
-                await html2pdf().set(pdfOptions).from(elementTemplate).save();
-
-                // 3. Simpan Rekod Ke Google Sheets
+                // 2. Hantar Rekod ke Google Sheets secara background
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -370,16 +384,19 @@
                     body: JSON.stringify(dataJualan)
                 });
 
-                // 4. Siapkan Link WhatsApp
+                // 3. PANGGIL SKRIN PRINT ASAL PELAYAR (Tukar jadi PDF di sini)
+                window.print();
+
+                // 4. Sediakan Link WhatsApp Automatik
                 if(rawPhone !== "") {
                     const mesejWA = 
-`Salam sejahtera *${namaCustomer}*, berikut merupakan resit rasmi digital (PDF) bagi transaksi topup *${inputTelco}* anda yang telah berjaya diproses oleh *AF ASCEND TRADING*.
+`Salam sejahtera *${namaCustomer}*, berikut merupakan ringkasan transaksi bagi topup *${inputTelco}* anda yang telah berjaya diproses oleh *AF ASCEND TRADING*.
 
-*Ringkasan Transaksi:*
+*Butiran Ringkas:*
 • Tarikh: ${tkh}
 • Jumlah Bayaran: RM ${totalBersihHitung}
 
-Sila rujuk fail dokumen PDF yang kami lampirkan bersama mesej ini untuk simpanan anda. Terima kasih!`;
+Sila simpan resit PDF yang telah kami cetak untuk rujukan anda. Terima kasih banyak!`;
 
                     const urlMesej = encodeURIComponent(mesejWA);
                     currentWaLink = `https://api.whatsapp.com/send?phone=${rawPhone}&text=${urlMesej}`;
@@ -393,10 +410,10 @@ Sila rujuk fail dokumen PDF yang kami lampirkan bersama mesej ini untuk simpanan
                 kemaskiniKadInfo();
 
             } catch (error) {
-                alert("Ralat semasa menyimpan: " + error.message);
+                alert("Ralat sistem: " + error.message);
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "Simpan & Jana PDF Premium";
+                saveBtn.innerText = "Simpan & Buka PDF Cetakan";
             }
         });
 
