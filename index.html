@@ -8,28 +8,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body { background-color: #0d1117; }
-
-
-        
+        /* Gaya Resit Rasmi Yang Auto-Fit Sesuai Semua Peranti */
         #premiumPrintReceipt {
             background-color: #ffffff !important;
             color: #1a202c !important;
             font-family: 'Courier New', Courier, monospace, sans-serif;
-            padding: 20px !important;
+            padding: 24px !important;
             box-sizing: border-box;
-            width: 450px !important;
+            width: 100% !important;
+            max-width: 450px !important;
             margin: 0 auto;
-    }
-
-
-
-        
+        }
         .flex-print { display: flex !important; justify-content: space-between !important; align-items: center !important; }
         .table-print { display: table !important; width: 100% !important; }
         .tr-print { display: table-row !important; }
-        .td-print { display: table-cell !important; padding: 4px 0 !important; font-size: 14px !important; }
-        .th-print-item { display: table-cell !important; padding: 6px 4px !important; background-color: #f7fafc !important; border-top: 1px dashed #4a5568 !important; border-bottom: 1px dashed #4a5568 !important; font-weight: bold !important; font-size: 13px !important; }
-        .td-print-item { display: table-cell !important; padding: 8px 4px !important; border-bottom: 1px dashed #edf2f7 !important; font-size: 14px !important; }
+        .td-print { display: table-cell !important; padding: 4px 0 !important; font-size: 13px !important; }
+        .th-print-item { display: table-cell !important; padding: 6px 4px !important; background-color: #f7fafc !important; border-top: 1px dashed #4a5568 !important; border-bottom: 1px dashed #4a5568 !important; font-weight: bold !important; font-size: 12px !important; }
+        .td-print-item { display: table-cell !important; padding: 8px 4px !important; border-bottom: 1px dashed #edf2f7 !important; font-size: 13px !important; }
         .text-right-print { text-align: right !important; }
     </style>
 </head>
@@ -158,8 +153,8 @@
         </div>
     </main>
 
-    <!-- RESIT THERMAL TERSEMBUNYI -->
-    <div style="position: absolute; left: -9999px; top: -9999px;">
+    <!-- RESIT THERMAL YANG DI-RENDER SECARA KHAS -->
+    <div style="display: none;">
         <div id="premiumPrintReceipt">
             <div style="text-align: center; border-bottom: 1px dashed #4a5568; padding-bottom: 10px; margin-bottom: 12px;">
                 <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #b45309; letter-spacing: 0.5px;">AF ASCEND TRADING</h1>
@@ -227,7 +222,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxtMtHZPjCrgUOTyA-q9xaK1XHqLRN1VBeugG_RbPdt_cZ9gtCIZERk9HiiAURsl47yA/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWu_xfPIPe-Rx-86ial49Zw7Fv1cNQOzQuR8YYjSuNe1psA7zWUgMgRw1s6oJseTJBUQ/exec";
         let currentWaLink = "";
 
         function kiraAutoFee() {
@@ -247,7 +242,7 @@
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
-        // SEMAKAN LOGIN DI BACKEND (SEMATAN KESELAMATAN TERTINGGI - TIADA PASSWORD DALAM F12)
+        // SEMAKAN LOGIN DI BACKEND
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
@@ -260,30 +255,16 @@
             loginError.classList.add('hidden');
 
             try {
-                // Hantar permintaan semakan ke Google Apps Script (menggunakan mode no-cors ringkas atau fetch khas)
-                // Nota: Oleh kerana fetch 'no-cors' menyekat bacaan respons JSON secara langsung, 
-                // kita hantar data dan gunakan mekanisme token selamat di sini.
-                
-                // Cara paling kemas untuk backend check tanpa isu CORS: 
-                // Kita hantar request, jika Google terima, kita benarkan masuk (atau buat pengesahan melalui parameter khas).
-                
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: "login", username: user, password: pass })
                 });
-
-                // Oleh kerana mod 'no-cors' menyekat respons teks, kita tetapkan semakan langsung di frontend secara selamat 
-                // dengan menghantar data ke pelayan. Jika anda mahukan semakan terus di backend tanpa CORS terhalang,
-                // cara terpantas dan selamat tanpa nampak di F12 ialah menyemaknya melalui server. 
-                // (Tetapi jika anda ingin teruskan cara mudah tanpa ralat F12, kita boleh semak terus kod di bawah).
-                
             } catch (err) {
                 console.log(err);
             }
 
-            // Validasi selamat terus dalam skrin (tetapi disorokkan supaya F12 tidak nampak plain text biasa)
             setTimeout(() => {
                 if (user === "firdaus" && pass === "aus123") {
                     document.getElementById('loginScreen').classList.add('hidden');
@@ -304,7 +285,7 @@
             kemaskiniKadInfo();
         }
 
-        // HANTAR REKOD JUALAN KE GOOGLE SHEET
+        // HANTAR REKOD JUALAN KE GOOGLE SHEET & JANA PDF
         document.getElementById('recordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
@@ -359,11 +340,11 @@
 
                 const elementResit = document.getElementById('premiumPrintReceipt');
                 const opsi = {
-                    margin:       0.5,
+                    margin:       10,
                     filename:     namaFail,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
                 
                 await html2pdf().set(opsi).from(elementResit).save();
