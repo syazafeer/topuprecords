@@ -121,9 +121,10 @@
     </footer>
 
     <script>
-        // MASUKKAN URL GOOGLE WEB APP KAU DEKAT SINI NANTI
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznWaF7p1TlnLtpXyEv-BPISZZhmqseckhgUQDbHaVnN5_VbjS3jdmNIAasFbYyxjFWcg/exec";
+        // LEKATKAN URL GOOGLE WEB APP KAU DEKAT SINI NANTI
+        const GOOGLE_SCRIPT_URL = "MASUKKAN_URL_WEB_APP_KAU_KAT_SINI";
 
+        // PASSWORD LOG MASUK (KAU BOLEH TUKAR KAT SINI IKUT SUKA KAU)
         const SYSTEM_USER = "admin";
         const SYSTEM_PASS = "123456"; 
 
@@ -133,7 +134,7 @@
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
-        // Handle Login
+        // Handle Login (Semak terus dalam kod - LAJU & TAK SANGKUT)
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const u = document.getElementById('username').value;
@@ -155,7 +156,7 @@
             document.getElementById('loginForm').reset();
         }
 
-        // Handle Hantar Data
+        // Handle Hantar Data ke Google Sheets
         document.getElementById('recordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
