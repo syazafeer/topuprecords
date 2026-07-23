@@ -353,11 +353,11 @@
 
                 const elementResit = document.getElementById('premiumPrintReceipt');
                 const opsi = {
-                    margin:       [0.2, 0.2, 0.2, 0.2],
+                    margin:       0,
                     filename:     namaFail,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 450 },
+                    jsPDF:        { unit: 'mm', format: [80, 180], orientation: 'portrait' }
                 };
                 
                 await html2pdf().set(opsi).from(elementResit).save();
