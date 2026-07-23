@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AF ASCEND TRADING - Internal System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { background-color: #0d1117; }
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 4px 0;
+        @media print {
+            body * { visibility: hidden; }
+            #printReceiptArea, #printReceiptArea * { visibility: visible; }
+            #printReceiptArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                margin: 0;
+                padding: 10px;
+                background: #ffffff !important;
+            }
         }
-        .receipt-label { color: #718096; }
-        .receipt-value { font-weight: 600; text-align: right; color: #1a202c; }
     </style>
 </head>
 <body class="text-gray-200 font-sans flex flex-col min-h-screen justify-between items-center p-6 bg-[#0d1117]">
@@ -137,15 +140,15 @@
                 </div>
 
                 <button type="submit" id="saveBtn" class="w-full mt-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-gray-950 font-bold py-3 rounded-lg hover:from-emerald-400 hover:to-teal-500 transition-all shadow-lg">
-                    Simpan & Auto-Download PDF
+                    Simpan & Papar Resit PDF
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- TEMPAT RESIT DISEMBUNYIKAN SECARA OFF-SCREEN (TETAPI BOLEH DIBACA OLEH HTML2PDF) -->
-    <div style="position: absolute; left: -9999px; top: -9999px;">
-        <div id="premiumPrintReceipt" style="background-color: #ffffff !important; color: #1a202c !important; font-family: 'Courier New', Courier, monospace, sans-serif; padding: 20px !important; width: 400px !important; box-sizing: border-box;">
+    <!-- KAWASAN RESIT KHAS UNTUK FUNGSI PRINT -->
+    <div id="printReceiptArea" class="w-full max-w-sm my-4 hidden">
+        <div style="background-color: #ffffff !important; color: #1a202c !important; font-family: 'Courier New', Courier, monospace, sans-serif; padding: 20px !important; border: 1px solid #cbd5e0; border-radius: 8px; box-sizing: border-box;">
             <div style="text-align: center; border-bottom: 1px dashed #4a5568; padding-bottom: 10px; margin-bottom: 12px;">
                 <h1 style="margin: 0; font-size: 18px; font-weight: 800; color: #b45309;">AF ASCEND TRADING</h1>
                 <p style="margin: 2px 0 0 0; font-size: 10px; color: #718096;">No. Pendaftaran: CA0421557X</p>
@@ -153,11 +156,11 @@
             </div>
 
             <div style="margin-bottom: 12px; border-bottom: 1px dashed #4a5568; padding-bottom: 8px;">
-                <div class="receipt-row"><span class="receipt-label">Pelanggan:</span><span class="receipt-value" id="pdfNama">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">WhatsApp:</span><span class="receipt-value" id="pdfFon">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">Tarikh:</span><span class="receipt-value" id="pdfTarikh">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">Bayaran:</span><span class="receipt-value" id="pdfBayar">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">Ref No:</span><span class="receipt-value" style="color: #4a5568;" id="pdfRef">-</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;"><span style="color: #718096;">Pelanggan:</span><span style="font-weight: 600; text-align: right; color: #1a202c;" id="pdfNama">-</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;"><span style="color: #718096;">WhatsApp:</span><span style="font-weight: 600; text-align: right; color: #1a202c;" id="pdfFon">-</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;"><span style="color: #718096;">Tarikh:</span><span style="font-weight: 600; text-align: right; color: #1a202c;" id="pdfTarikh">-</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;"><span style="color: #718096;">Bayaran:</span><span style="font-weight: 600; text-align: right; color: #1a202c;" id="pdfBayar">-</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;"><span style="color: #718096;">Ref No:</span><span style="font-weight: 600; text-align: right; color: #4a5568;" id="pdfRef">-</span></div>
             </div>
 
             <div style="margin-bottom: 12px;">
@@ -165,8 +168,8 @@
                     <span>DESKRIPSI ITEMS</span>
                     <span>JUMLAH</span>
                 </div>
-                <div class="receipt-row" style="padding-top: 8px;"><span style="font-weight: 600;" id="pdfItemNama">Topup Celcom</span><span style="font-weight: 600;" id="pdfHargaItem">RM 0.00</span></div>
-                <div class="receipt-row"><span style="font-weight: 600;">Fee Caj Servis Gateway</span><span style="font-weight: 600;" id="pdfHargaFee">RM 0.00</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0 4px 0;"><span style="font-weight: 600;" id="pdfItemNama">Topup Celcom</span><span style="font-weight: 600;" id="pdfHargaItem">RM 0.00</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;"><span style="font-weight: 600;">Fee Caj Servis Gateway</span><span style="font-weight: 600;" id="pdfHargaFee">RM 0.00</span></div>
             </div>
 
             <div style="border-top: 1px dashed #4a5568; padding-top: 6px; margin-top: 10px;">
@@ -181,15 +184,18 @@
         </div>
     </div>
 
-    <!-- MODAL WHATSAPP -->
+    <!-- MODAL WHATSAPP & CETAK -->
     <div id="waModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-[#161b22] border border-emerald-800 w-full max-w-sm rounded-2xl p-6 text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 bg-emerald-950 border border-emerald-500 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-xl font-bold">✓</div>
             <div>
-                <h3 class="text-lg font-bold text-gray-100">PDF Berjaya Di-download!</h3>
-                <p class="text-xs text-gray-400 mt-1">Fail resit telah disimpan secara automatik. Sila hantar kepada pelanggan melalui WhatsApp.</p>
+                <h3 class="text-lg font-bold text-gray-100">Transaksi Berjaya Di-rekod!</h3>
+                <p class="text-xs text-gray-400 mt-1">Sila klik butang di bawah untuk simpan fail PDF atau hantar WhatsApp.</p>
             </div>
             <div class="pt-2 space-y-2">
+                <button onclick="window.print()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
+                    <span>Simpan PDF / Cetak Resit</span>
+                </button>
                 <button onclick="bukaWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
                     <span>Hantar Ke WhatsApp</span>
                 </button>
@@ -293,11 +299,10 @@
             const inputFee = parseFloat(dataJualan.fee).toFixed(2);
             const hIni = new Date();
             const tkh = ("0" + hIni.getDate()).slice(-2) + "/" + ("0" + (hIni.getMonth() + 1)).slice(-2) + "/" + hIni.getFullYear();
-            const namaFail = "Resit_" + dataJualan.nama.replace(/\s+/g, '_') + ".pdf";
             const totalBersihHitung = (parseFloat(inputJual) + parseFloat(inputFee)).toFixed(2);
 
             saveBtn.disabled = true;
-            saveBtn.innerText = "Menyimpan & Auto-Download PDF...";
+            saveBtn.innerText = "Menyimpan Rekod...";
 
             try {
                 document.getElementById('pdfNama').innerText = dataJualan.nama;
@@ -311,25 +316,12 @@
                 document.getElementById('pdfSubtotal').innerText = "RM " + totalBersihHitung;
                 document.getElementById('pdfTotalBersih').innerText = "RM " + totalBersihHitung;
 
-                // Hantar data ke Google Sheet di background
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataJualan)
                 });
-
-                // Tetapan Auto-Download PDF
-                const elementResit = document.getElementById('premiumPrintReceipt');
-                const opsi = {
-                    margin:       5,
-                    filename:     namaFail,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-                
-                await html2pdf().set(opsi).from(elementResit).save();
 
                 if(rawPhone !== "") {
                     const mesejWA = `Salam sejahtera *${dataJualan.nama}*, berikut merupakan ringkasan transaksi bagi topup *${dataJualan.telco}* anda yang telah berjaya diproses oleh *AF ASCEND TRADING*.\n\n*Butiran Ringkas:*\n• Tarikh: ${tkh}\n• Jumlah Bayaran: RM ${totalBersihHitung}\n\nTerima kasih!`;
@@ -346,7 +338,7 @@
                 alert("Ralat sistem: " + error.message);
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "Simpan & Auto-Download PDF";
+                saveBtn.innerText = "Simpan & Papar Resit PDF";
             }
         });
 
