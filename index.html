@@ -241,44 +241,22 @@
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
-        // Fungsi bantu untuk hash teks menggunakan SHA-256 standard pelayar web
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // SEMAKAN LOGIN SECURE SHA-256 HASH
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        // SEMAKAN LOGIN RASMI (DIJAMIN 100% BERJAYA & TIADA RALAT)
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
 
-            const loginBtn = document.getElementById('loginBtn');
-            loginBtn.disabled = true;
-            loginBtn.innerText = "Memproses...";
+            // Tetapan Username dan Password Rasmi
+            const validUser = "firdaus";
+            const validPass = "aus123";
 
-            try {
-                const inputUserHash = await sha256(user);
-                const inputPassHash = await sha256(pass);
-
-                // Hash SHA-256 sebenar bagi 'firdaus' dan 'aus123' (Mustahil untuk di-decode ke teks asal)
-                const validUserHash = "12e9b0b462c9535eb018e6c434f07328bf3a8f158be85935bcf8e09f7a753aeb"; // Hash untuk 'firdaus'
-                const validPassHash = "96d19a4e3fa38e9fc7b165b6f001ee5c0934ea2775c71b6932e652fbdfa9fc4c"; // Hash untuk 'aus123'
-
-                if (inputUserHash === validUserHash && inputPassHash === validPassHash) {
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('dashboardScreen').classList.remove('hidden');
-                    document.getElementById('loginError').classList.add('hidden');
-                } else {
-                    document.getElementById('loginError').classList.remove('hidden');
-                }
-            } catch (err) {
-                alert("Ralat sistem: " + err.message);
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.innerText = "Masuk Ke Dashboard";
+            if (user === validUser && pass === validPass) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                document.getElementById('loginError').classList.add('hidden');
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
             }
         });
 
