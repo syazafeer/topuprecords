@@ -121,20 +121,26 @@
     </footer>
 
     <script>
-        // LEKATKAN URL GOOGLE WEB APP KAU DEKAT SINI NANTI
+        // URL GOOGLE WEB APP KAU (DAH BETUL)
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznWaF7p1TlnLtpXyEv-BPISZZhmqseckhgUQDbHaVnN5_VbjS3jdmNIAasFbYyxjFWcg/exec";
 
-        // PASSWORD LOG MASUK (KAU BOLEH TUKAR KAT SINI IKUT SUKA KAU)
+        // PASSWORD LOG MASUK
         const SYSTEM_USER = "admin";
         const SYSTEM_PASS = "123456"; 
 
+        // FUNGSI PENGIRAAN AUTOMATIK (DAH DIBETULKAN SUPAYA LIVE)
         function kiraAutomatik() {
+            const jual = parseFloat(document.getElementById('jual').value) || 0;
             const fee = parseFloat(document.getElementById('fee').value) || 0;
+            
+            // Tunjukkan Jumlah Fee
             document.getElementById('liveJumlahFee').innerText = "RM " + fee.toFixed(2);
+            
+            // Untung Bersih dihitung daripada Fee Servis
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
-        // Handle Login (Semak terus dalam kod - LAJU & TAK SANGKUT)
+        // Handle Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const u = document.getElementById('username').value;
@@ -154,6 +160,7 @@
             document.getElementById('dashboardScreen').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('loginForm').reset();
+            kiraAutomatik(); // Reset semula info live kad
         }
 
         // Handle Hantar Data ke Google Sheets
@@ -182,7 +189,7 @@
 
                 alert("Transaksi Berjaya Disimpan!");
                 document.getElementById('recordForm').reset();
-                kiraAutomatik();
+                kiraAutomatik(); // Reset semula info live kad
             } catch (error) {
                 alert("Gagal menyimpan rekod: " + error.message);
             } finally {
