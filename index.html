@@ -5,48 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AF ASCEND TRADING - Internal System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background-color: #0d1117; }
-        
-        /* GAYA KHAS UNTUK CETAKAN PDF / PRINT */
-        @media print {
-            body * { visibility: hidden; }
-            #printableArea, #printableArea * { visibility: visible; }
-            #printableArea {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100% !important;
-                background: white !important;
-                color: black !important;
-                margin: 0;
-                padding: 10px;
-            }
-        }
-
-        #premiumPrintReceipt {
-            background-color: #ffffff !important;
-            color: #1a202c !important;
-            font-family: 'Courier New', Courier, monospace, sans-serif;
-            padding: 20px !important;
-            width: 100% !important;
-            max-width: 400px !important;
-            margin: 0 auto;
-            box-sizing: border-box;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-        }
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 4px 0;
-        }
-        .receipt-label { color: #718096; }
-        .receipt-value { font-weight: 600; text-align: right; color: #1a202c; }
-    </style>
 </head>
-<body class="text-gray-200 font-sans flex flex-col min-h-screen justify-between items-center p-6 relative">
+<body class="text-gray-200 font-sans flex flex-col min-h-screen justify-between items-center p-6 bg-[#0d1117]">
 
     <header class="text-center mt-6 space-y-2">
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">
@@ -165,61 +125,23 @@
                 </div>
 
                 <button type="submit" id="saveBtn" class="w-full mt-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-gray-950 font-bold py-3 rounded-lg hover:from-emerald-400 hover:to-teal-500 transition-all shadow-lg">
-                    Simpan & Papar Resit PDF
+                    Simpan & Jana Resit PDF
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- PAPARAN RESIT UTAMA UNTUK CETAKAN -->
-    <div id="printableArea" class="w-full max-w-md my-6">
-        <div id="premiumPrintReceipt">
-            <div style="text-align: center; border-bottom: 1px dashed #4a5568; padding-bottom: 10px; margin-bottom: 12px;">
-                <h1 style="margin: 0; font-size: 18px; font-weight: 800; color: #b45309;">AF ASCEND TRADING</h1>
-                <p style="margin: 2px 0 0 0; font-size: 10px; color: #718096;">No. Pendaftaran: CA0421557X</p>
-                <div style="margin-top: 6px;"><span style="border: 1px solid #4a5568; font-size: 9px; font-weight: 700; padding: 2px 6px;">RESIT RASMI</span></div>
-            </div>
-
-            <div style="margin-bottom: 12px; border-bottom: 1px dashed #4a5568; padding-bottom: 8px;">
-                <div class="receipt-row"><span class="receipt-label">Pelanggan:</span><span class="receipt-value" id="pdfNama">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">WhatsApp:</span><span class="receipt-value" id="pdfFon">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">Tarikh:</span><span class="receipt-value" id="pdfTarikh">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">Bayaran:</span><span class="receipt-value" id="pdfBayar">-</span></div>
-                <div class="receipt-row"><span class="receipt-label">Ref No:</span><span class="receipt-value" style="color: #4a5568;" id="pdfRef">-</span></div>
-            </div>
-
-            <div style="margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; background-color: #f7fafc; padding: 6px 4px; border-top: 1px dashed #4a5568; border-bottom: 1px dashed #4a5568; font-weight: bold; font-size: 11px;">
-                    <span>DESKRIPSI ITEMS</span>
-                    <span>JUMLAH</span>
-                </div>
-                <div class="receipt-row" style="padding-top: 8px;"><span style="font-weight: 600;" id="pdfItemNama">Topup Celcom</span><span style="font-weight: 600;" id="pdfHargaItem">RM 0.00</span></div>
-                <div class="receipt-row"><span style="font-weight: 600;">Fee Caj Servis Gateway</span><span style="font-weight: 600;" id="pdfHargaFee">RM 0.00</span></div>
-            </div>
-
-            <div style="border-top: 1px dashed #4a5568; padding-top: 6px; margin-top: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4a5568;"><span>Subtotal:</span><span id="pdfSubtotal">RM 0.00</span></div>
-                <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: #000000; margin-top: 2px;"><span>TOTAL BERSIH:</span><span id="pdfTotalBersih">RM 0.00</span></div>
-            </div>
-
-            <div style="text-align: center; margin-top: 25px; border-top: 1px dashed #4a5568; padding-top: 8px; font-size: 9px; color: #718096;">
-                <p style="margin: 0; font-weight: 600;">Terima kasih daripada AF Ascend Trading.</p>
-                <p style="margin: 2px 0 0 0;">Dokumen disahkan komputer.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL WHATSAPP -->
+    <!-- MODAL WHATSAPP & CETAK -->
     <div id="waModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-[#161b22] border border-emerald-800 w-full max-w-sm rounded-2xl p-6 text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 bg-emerald-950 border border-emerald-500 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-xl font-bold">✓</div>
             <div>
                 <h3 class="text-lg font-bold text-gray-100">Transaksi Berjaya Di-rekod!</h3>
-                <p class="text-xs text-gray-400 mt-1">Sila cetak atau simpan fail PDF resit ini.</p>
+                <p class="text-xs text-gray-400 mt-1">Sila klik butang di bawah untuk cetak atau simpan resit PDF.</p>
             </div>
             <div class="pt-2 space-y-2">
-                <button onclick="window.print()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
-                    <span>Cetak / Simpan Sebagai PDF</span>
+                <button onclick="cetakResitPDF()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
+                    <span>Cetak / Simpan PDF Resit</span>
                 </button>
                 <button onclick="bukaWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
                     <span>Hantar Ke WhatsApp</span>
@@ -239,6 +161,7 @@
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWu_xfPIPe-Rx-86ial49Zw7Fv1cNQOzQuR8YYjSuNe1psA7zWUgMgRw1s6oJseTJBUQ/exec";
         let currentWaLink = "";
+        let dataTerakhir = {};
 
         function kiraAutoFee() {
             const jual = parseFloat(document.getElementById('jual').value) || 0;
@@ -308,9 +231,27 @@
                 rawPhone = '60' + rawPhone;
             }
 
+            const inputJual = parseFloat(document.getElementById('jual').value).toFixed(2);
+            const inputFee = parseFloat(document.getElementById('fee').value).toFixed(2);
+            const hIni = new Date();
+            const tkh = ("0" + hIni.getDate()).slice(-2) + "/" + ("0" + (hIni.getMonth() + 1)).slice(-2) + "/" + hIni.getFullYear();
+            const totalBersihHitung = (parseFloat(inputJual) + parseFloat(inputFee)).toFixed(2);
+
+            dataTerakhir = {
+                nama: document.getElementById('nota').value,
+                whatsapp: "+" + rawPhone,
+                tarikh: tkh,
+                telco: document.getElementById('telco').value,
+                pembayaran: document.getElementById('pembayaran').value + " (" + document.getElementById('bank').value + ")",
+                ref: document.getElementById('resit').value || "-",
+                jual: "RM " + inputJual,
+                fee: "RM " + inputFee,
+                total: "RM " + totalBersihHitung
+            };
+
             const dataJualan = {
                 action: "simpan",
-                nama: document.getElementById('nota').value,
+                nama: dataTerakhir.nama,
                 whatsapp: document.getElementById('whatsapp_no').value,
                 telco: document.getElementById('telco').value,
                 pembayaran: document.getElementById('pembayaran').value,
@@ -320,27 +261,10 @@
                 fee: document.getElementById('fee').value
             };
 
-            const inputJual = parseFloat(dataJualan.jual).toFixed(2);
-            const inputFee = parseFloat(dataJualan.fee).toFixed(2);
-            const hIni = new Date();
-            const tkh = ("0" + hIni.getDate()).slice(-2) + "/" + ("0" + (hIni.getMonth() + 1)).slice(-2) + "/" + hIni.getFullYear();
-            const totalBersihHitung = (parseFloat(inputJual) + parseFloat(inputFee)).toFixed(2);
-
             saveBtn.disabled = true;
             saveBtn.innerText = "Menyimpan Rekod...";
 
             try {
-                document.getElementById('pdfNama').innerText = dataJualan.nama;
-                document.getElementById('pdfFon').innerText = "+" + rawPhone;
-                document.getElementById('pdfTarikh').innerText = tkh;
-                document.getElementById('pdfBayar').innerText = dataJualan.pembayaran + " (" + dataJualan.bank + ")";
-                document.getElementById('pdfRef').innerText = dataJualan.resit;
-                document.getElementById('pdfItemNama').innerText = "Topup " + dataJualan.telco;
-                document.getElementById('pdfHargaItem').innerText = "RM " + inputJual;
-                document.getElementById('pdfHargaFee').innerText = "RM " + inputFee;
-                document.getElementById('pdfSubtotal').innerText = "RM " + totalBersihHitung;
-                document.getElementById('pdfTotalBersih').innerText = "RM " + totalBersihHitung;
-
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -349,7 +273,7 @@
                 });
 
                 if(rawPhone !== "") {
-                    const mesejWA = `Salam sejahtera *${dataJualan.nama}*, berikut merupakan ringkasan transaksi bagi topup *${dataJualan.telco}* anda yang telah berjaya diproses oleh *AF ASCEND TRADING*.\n\n*Butiran Ringkas:*\n• Tarikh: ${tkh}\n• Jumlah Bayaran: RM ${totalBersihHitung}\n\nTerima kasih!`;
+                    const mesejWA = `Salam sejahtera *${dataTerakhir.nama}*, berikut merupakan ringkasan transaksi bagi topup *${dataTerakhir.telco}* anda yang telah berjaya diproses oleh *AF ASCEND TRADING*.\n\n*Butiran Ringkas:*\n• Tarikh: ${dataTerakhir.tarikh}\n• Jumlah Bayaran: ${dataTerakhir.total}\n\nTerima kasih!`;
                     currentWaLink = `https://api.whatsapp.com/send?phone=${rawPhone}&text=${encodeURIComponent(mesejWA)}`;
                 } else {
                     currentWaLink = "";
@@ -363,9 +287,65 @@
                 alert("Ralat sistem: " + error.message);
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "Simpan & Papar Resit PDF";
+                saveBtn.innerText = "Simpan & Jana Resit PDF";
             }
         });
+
+        function cetakResitPDF() {
+            const winPrint = window.open('', '_blank', 'width=450,height=700');
+            winPrint.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Resit_${dataTerakhir.nama.replace(/\s+/g, '_')}</title>
+                    <style>
+                        body { font-family: 'Courier New', Courier, monospace; padding: 20px; color: #1a202c; background: #fff; }
+                        .center { text-align: center; }
+                        .line { border-bottom: 1px dashed #4a5568; margin: 10px 0; }
+                        .row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+                        .label { color: #718096; }
+                        .value { font-weight: bold; text-align: right; }
+                    </style>
+                </head>
+                <body>
+                    <div class="center">
+                        <h2 style="margin:0; color:#b45309; font-size: 18px;">AF ASCEND TRADING</h2>
+                        <p style="margin:2px 0; font-size:10px; color:#718096;">No. Pendaftaran: CA0421557X</p>
+                        <div style="margin-top:6px;"><span style="border:1px solid #4a5568; font-size:9px; font-weight:bold; padding:2px 6px;">RESIT RASMI</span></div>
+                    </div>
+                    <div class="line"></div>
+                    <div>
+                        <div class="row"><span class="label">Pelanggan:</span><span class="value">${dataTerakhir.nama}</span></div>
+                        <div class="row"><span class="label">WhatsApp:</span><span class="value">${dataTerakhir.whatsapp}</span></div>
+                        <div class="row"><span class="label">Tarikh:</span><span class="value">${dataTerakhir.tarikh}</span></div>
+                        <div class="row"><span class="label">Bayaran:</span><span class="value">${dataTerakhir.pembayaran}</span></div>
+                        <div class="row"><span class="label">Ref No:</span><span class="value" style="color:#4a5568;">${dataTerakhir.ref}</span></div>
+                    </div>
+                    <div class="line"></div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; background:#f7fafc; padding:6px 4px; border-top:1px dashed #4a5568; border-bottom:1px dashed #4a5568; font-weight:bold; font-size:11px;">
+                            <span>DESKRIPSI ITEMS</span><span>JUMLAH</span>
+                        </div>
+                        <div class="row" style="padding-top:8px;"><span style="font-weight:bold;">Topup ${dataTerakhir.telco}</span><span style="font-weight:bold;">${dataTerakhir.jual}</span></div>
+                        <div class="row"><span style="font-weight:bold;">Fee Caj Servis Gateway</span><span style="font-weight:bold;">${dataTerakhir.fee}</span></div>
+                    </div>
+                    <div class="line"></div>
+                    <div>
+                        <div class="row" style="font-size:12px; color:#718096;"><span>Subtotal:</span><span>${dataTerakhir.total}</span></div>
+                        <div class="row" style="font-size:14px; font-weight:bold; color:#000; margin-top:2px;"><span>TOTAL BERSIH:</span><span>${dataTerakhir.total}</span></div>
+                    </div>
+                    <div class="center" style="margin-top:25px; border-top:1px dashed #4a5568; padding-top:8px; font-size:9px; color:#718096;">
+                        <p style="margin:0; font-weight:bold;">Terima kasih daripada AF Ascend Trading.</p>
+                        <p style="margin:2px 0 0 0;">Dokumen disahkan komputer.</p>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            winPrint.document.close();
+        }
 
         function bukaWhatsApp() {
             if(currentWaLink !== "") window.open(currentWaLink, '_blank');
