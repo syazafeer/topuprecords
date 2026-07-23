@@ -87,12 +87,11 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs text-gray-400 uppercase mb-1">Nilai Topup / Harga Jual (RM)</label>
-                        <input type="number" step="0.01" id="jual" required placeholder="10.00" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-100 focus:border-amber-500 focus:outline-none" oninput="kiraAutomatik()">
+                        <input type="number" step="0.01" id="jual" required placeholder="10.00" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-100 focus:border-amber-500 focus:outline-none" oninput="kiraAutoFee()">
                     </div>
                     <div>
                         <label class="block text-xs text-gray-400 uppercase mb-1">Fee Servis (RM)</label>
-                        <!-- DAH FIXED DESIGN TEMA GELAP SAMA MACAM KOTAK LAIN -->
-                        <input type="number" step="0.01" id="fee" required placeholder="0.00" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-100 focus:border-amber-500 focus:outline-none" oninput="kiraAutomatik()">
+                        <input type="number" step="0.01" id="fee" required placeholder="0.00" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-100 focus:border-amber-500 focus:outline-none" oninput="kemaskiniKadInfo()">
                     </div>
                 </div>
 
@@ -122,30 +121,27 @@
     </footer>
 
     <script>
-        // URL GOOGLE WEB APP KAU (DAH KEKALKAN VERSI NO RESIT TERBARU KAU)
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrWNhG31dpY8SpMnaBuHLz2awzlbO_CuIzeKgcpK96khm7JlxpSurpewqY5nlU5EkdNA/exec";
-
-        // PASSWORD LOG MASUK
         const SYSTEM_USER = "admin";
         const SYSTEM_PASS = "123456"; 
 
-        // FUNGSI PENGIRAAN AUTOMATIK DENGAN DEFAULT 2.5%
-        function kiraAutomatik() {
-            const jualInput = document.getElementById('jual');
+        // 1. Fungsi bila user taip kat 'Harga Jual' -> Auto kira 2.5% masuk kotak Fee
+        function kiraAutoFee() {
+            const jual = parseFloat(document.getElementById('jual').value) || 0;
             const feeInput = document.getElementById('fee');
             
-            const jual = parseFloat(jualInput.value) || 0;
-
-            // Jika user tengah fokus/taip dekat kotak 'Harga Jual', auto-calculate 2.5% masuk kotak fee
-            if (document.activeElement === jualInput && jual > 0) {
-                const autoFee = jual * 0.025; // Formula 2.5%
+            if (jual > 0) {
+                const autoFee = jual * 0.025;
                 feeInput.value = autoFee.toFixed(2);
+            } else {
+                feeInput.value = "";
             }
+            kemaskiniKadInfo();
+        }
 
-            // Ambil amaun akhir dari kotak fee
-            const fee = parseFloat(feeInput.value) || 0;
-            
-            // Tunjukkan Nilai Dekat Kad Info Bawah
+        // 2. Fungsi untuk kemaskini nilai paparan pada kad info bawah
+        function kemaskiniKadInfo() {
+            const fee = parseFloat(document.getElementById('fee').value) || 0;
             document.getElementById('liveJumlahFee').innerText = "RM " + fee.toFixed(2);
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
@@ -170,7 +166,7 @@
             document.getElementById('dashboardScreen').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('loginForm').reset();
-            kiraAutomatik(); // Reset semula info live kad
+            kemaskiniKadInfo();
         }
 
         // Handle Hantar Data ke Google Sheets
@@ -178,6 +174,7 @@
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
             
+            // Tangkap nilai tepat SEBELUM borang di-reset
             const dataJualan = {
                 nota: document.getElementById('nota').value,
                 telco: document.getElementById('telco').value,
@@ -199,7 +196,7 @@
 
                 alert("Transaksi Berjaya Disimpan!");
                 document.getElementById('recordForm').reset();
-                kiraAutomatik(); // Reset live info kad
+                kemaskiniKadInfo(); // Set semula kad info jadi RM 0.00 selepas selesai
             } catch (error) {
                 alert("Gagal menyimpan rekod: " + error.message);
             } finally {
