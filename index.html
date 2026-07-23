@@ -13,12 +13,20 @@
             background-color: #ffffff !important;
             color: #1a202c !important;
             font-family: 'Courier New', Courier, monospace, sans-serif;
-            padding: 24px !important;
-            box-sizing: border-box;
+            padding: 20px !important;
             width: 100% !important;
-            max-width: 450px !important;
+            max-width: 400px !important;
             margin: 0 auto;
+            box-sizing: border-box;
         }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        .receipt-label { color: #718096; }
+        .receipt-value { font-weight: 600; text-align: right; }
         .flex-print { display: flex !important; justify-content: space-between !important; align-items: center !important; }
         .table-print { display: table !important; width: 100% !important; }
         .tr-print { display: table-row !important; }
@@ -154,43 +162,37 @@
     </main>
 
     <!-- RESIT THERMAL YANG DI-RENDER SECARA KHAS -->
-    <div style="display: none;">
+  <div style="display: none;">
         <div id="premiumPrintReceipt">
             <div style="text-align: center; border-bottom: 1px dashed #4a5568; padding-bottom: 10px; margin-bottom: 12px;">
-                <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #b45309; letter-spacing: 0.5px;">AF ASCEND TRADING</h1>
-                <p style="margin: 2px 0 0 0; font-size: 11px; color: #718096;">No. Pendaftaran: CA0421557X</p>
-                <div style="margin-top: 6px;"><span style="border: 1px solid #4a5568; font-size: 10px; font-weight: 700; padding: 2px 8px; text-transform: uppercase;">RESIT RASMI</span></div>
+                <h1 style="margin: 0; font-size: 18px; font-weight: 800; color: #b45309;">AF ASCEND TRADING</h1>
+                <p style="margin: 2px 0 0 0; font-size: 10px; color: #718096;">No. Pendaftaran: CA0421557X</p>
+                <div style="margin-top: 6px;"><span style="border: 1px solid #4a5568; font-size: 9px; font-weight: 700; padding: 2px 6px;">RESIT RASMI</span></div>
             </div>
 
-            <div class="table-print" style="margin-bottom: 12px; border-bottom: 1px dashed #4a5568; padding-bottom: 8px;">
-                <div class="tr-print"><div class="td-print" style="color: #718096; width: 35%;">Pelanggan:</div><div class="td-print" style="font-weight: 600; text-align: right;" id="pdfNama">-</div></div>
-                <div class="tr-print"><div class="td-print" style="color: #718096;">WhatsApp:</div><div class="td-print" style="font-weight: 600; text-align: right;" id="pdfFon">-</div></div>
-                <div class="tr-print"><div class="td-print" style="color: #718096;">Tarikh:</div><div class="td-print" style="font-weight: 600; text-align: right;" id="pdfTarikh">-</div></div>
-                <div class="tr-print"><div class="td-print" style="color: #718096;">Bayaran:</div><div class="td-print" style="font-weight: 600; text-align: right;" id="pdfBayar">-</div></div>
-                <div class="tr-print"><div class="td-print" style="color: #718096;">Ref No:</div><div class="td-print" style="color: #4a5568; text-align: right;" id="pdfRef">-</div></div>
+            <div style="margin-bottom: 12px; border-bottom: 1px dashed #4a5568; padding-bottom: 8px;">
+                <div class="receipt-row"><span class="receipt-label">Pelanggan:</span><span class="receipt-value" id="pdfNama">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">WhatsApp:</span><span class="receipt-value" id="pdfFon">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">Tarikh:</span><span class="receipt-value" id="pdfTarikh">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">Bayaran:</span><span class="receipt-value" id="pdfBayar">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">Ref No:</span><span class="receipt-value" style="color: #4a5568;" id="pdfRef">-</span></div>
             </div>
 
-            <div class="table-print" style="margin-bottom: 12px;">
-                <div class="tr-print">
-                    <div class="th-print-item">DESKRIPSI ITEMS</div>
-                    <div class="th-print-item text-right-print" style="width: 35%;">JUMLAH</div>
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; background-color: #f7fafc; padding: 6px 4px; border-top: 1px dashed #4a5568; border-bottom: 1px dashed #4a5568; font-weight: bold; font-size: 11px;">
+                    <span>DESKRIPSI ITEMS</span>
+                    <span>JUMLAH</span>
                 </div>
-                <div class="tr-print">
-                    <div class="td-print-item"><div style="font-weight: 600;" id="pdfItemNama">Topup Celcom</div></div>
-                    <div class="td-print-item text-right-print" style="font-weight: 600;" id="pdfHargaItem">RM 0.00</div>
-                </div>
-                <div class="tr-print">
-                    <div class="td-print-item"><div style="font-weight: 600;">Fee Caj Servis Gateway</div></div>
-                    <div class="td-print-item text-right-print" style="font-weight: 600;" id="pdfHargaFee">RM 0.00</div>
-                </div>
+                <div class="receipt-row" style="padding-top: 8px;"><span style="font-weight: 600;" id="pdfItemNama">Topup Celcom</span><span style="font-weight: 600;" id="pdfHargaItem">RM 0.00</span></div>
+                <div class="receipt-row"><span style="font-weight: 600;">Fee Caj Servis Gateway</span><span style="font-weight: 600;" id="pdfHargaFee">RM 0.00</span></div>
             </div>
 
             <div style="border-top: 1px dashed #4a5568; padding-top: 6px; margin-top: 10px;">
-                <div class="flex-print" style="font-size: 12px; color: #4a5568;"><span>Subtotal:</span><span id="pdfSubtotal">RM 0.00</span></div>
-                <div class="flex-print" style="font-size: 15px; font-weight: 800; color: #000000; margin-top: 2px;"><span>TOTAL BERSIH:</span><span id="pdfTotalBersih">RM 0.00</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4a5568;"><span>Subtotal:</span><span id="pdfSubtotal">RM 0.00</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: #000000; margin-top: 2px;"><span>TOTAL BERSIH:</span><span id="pdfTotalBersih">RM 0.00</span></div>
             </div>
 
-            <div style="text-align: center; margin-top: 35px; border-top: 1px dashed #4a5568; padding-top: 10px; font-size: 10px; color: #718096;">
+            <div style="text-align: center; margin-top: 25px; border-top: 1px dashed #4a5568; padding-top: 8px; font-size: 9px; color: #718096;">
                 <p style="margin: 0; font-weight: 600;">Terima kasih daripada AF Ascend Trading.</p>
                 <p style="margin: 2px 0 0 0;">Dokumen disahkan komputer.</p>
             </div>
@@ -339,8 +341,8 @@
                 });
 
                 const elementResit = document.getElementById('premiumPrintReceipt');
-                const opsi = {
-                    margin:       10,
+               const opsi = {
+                    margin:       5,
                     filename:     namaFail,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
