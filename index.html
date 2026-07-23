@@ -46,7 +46,7 @@
             <form id="loginForm" class="space-y-5">
                 <div>
                     <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Username</label>
-                    <input type="text" id="username" required placeholder="admin" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-gray-100 focus:border-amber-500 focus:outline-none">
+                    <input type="text" id="username" required placeholder="Masukkan username" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-gray-100 focus:border-amber-500 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Password</label>
@@ -221,7 +221,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydAo_zARVae0CNwspRgUamjCSqXuhrEL8IstvR9S7U3-Pgpk9tqL1UhZpTiSJR2khM5g/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWu_xfPIPe-Rx-86ial49Zw7Fv1cNQOzQuR8YYjSuNe1psA7zWUgMgRw1s6oJseTJBUQ/exec";
         let currentWaLink = "";
 
         function kiraAutoFee() {
@@ -241,28 +241,27 @@
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
-        // SEMAKAN LOGIN SELAMAT DI BACKEND GOOGLE APPS SCRIPT (TIADA LAGI PASSWORD DALAM F12)
+        // SEMAKAN LOGIN SELAMAT (DISEMAK DI BACKEND GOOGLE APPS SCRIPT)
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const loginBtn = document.getElementById('loginBtn');
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
 
             loginBtn.disabled = true;
             loginBtn.innerText = "Memeriksa Kredensial...";
 
             try {
-                // Hantar data login ke Apps Script menggunakan mode 'cors' atau fetch biasa
-                await fetch(GOOGLE_SCRIPT_URL, {
+                // Hantar permintaan semak ke Google Apps Script tanpa no-cors
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: "login", username: user, password: pass })
                 });
 
-                // Oleh kerana guna no-cors untuk elak isu CORS Google, kita terus benarkan masuk 
-                // (atau jika guna response biasa, pastikan backend sahkan). Untuk mudah dan lancar:
-                if(user === "admin" && pass === "123456") {
+                const result = await response.json();
+
+                if (result.status === "login_success") {
                     document.getElementById('loginScreen').classList.add('hidden');
                     document.getElementById('dashboardScreen').classList.remove('hidden');
                     document.getElementById('loginError').classList.add('hidden');
@@ -270,14 +269,8 @@
                     document.getElementById('loginError').classList.remove('hidden');
                 }
             } catch (err) {
-                // Fallback jika ada ralat rangkaian
-                if(user === "admin" && pass === "123456") {
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('dashboardScreen').classList.remove('hidden');
-                    document.getElementById('loginError').classList.add('hidden');
-                } else {
-                    document.getElementById('loginError').classList.remove('hidden');
-                }
+                document.getElementById('loginError').innerText = "Ralat sambungan ke server!";
+                document.getElementById('loginError').classList.remove('hidden');
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.innerText = "Masuk Ke Dashboard";
@@ -291,6 +284,7 @@
             kemaskiniKadInfo();
         }
 
+        // HANTAR REKOD JUALAN
         document.getElementById('recordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
@@ -367,7 +361,7 @@
             } catch (error) {
                 alert("Ralat sistem: " + error.message);
             } finally {
-                saveBtn.disabled = false;
+                saveBtn.disabled.clear || (saveBtn.disabled = false);
                 saveBtn.innerText = "Simpan & Buka PDF Cetakan";
             }
         });
