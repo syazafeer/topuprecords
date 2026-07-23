@@ -91,7 +91,8 @@
                     </div>
                     <div>
                         <label class="block text-xs text-gray-400 uppercase mb-1">Fee Servis (RM)</label>
-                        <input type="number" id="fee" step="0.01" class="w-full p-2 border rounded" placeholder="0.00" oninput="kiraAutomatik()">
+                        <!-- DAH FIXED DESIGN TEMA GELAP SAMA MACAM KOTAK LAIN -->
+                        <input type="number" step="0.01" id="fee" required placeholder="0.00" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-100 focus:border-amber-500 focus:outline-none" oninput="kiraAutomatik()">
                     </div>
                 </div>
 
@@ -121,22 +122,31 @@
     </footer>
 
     <script>
-        // URL GOOGLE WEB APP KAU (DAH BETUL)
+        // URL GOOGLE WEB APP KAU (DAH KEKALKAN VERSI NO RESIT TERBARU KAU)
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrWNhG31dpY8SpMnaBuHLz2awzlbO_CuIzeKgcpK96khm7JlxpSurpewqY5nlU5EkdNA/exec";
 
         // PASSWORD LOG MASUK
         const SYSTEM_USER = "admin";
         const SYSTEM_PASS = "123456"; 
 
-        // FUNGSI PENGIRAAN AUTOMATIK (DAH DIBETULKAN SUPAYA LIVE)
+        // FUNGSI PENGIRAAN AUTOMATIK DENGAN DEFAULT 2.5%
         function kiraAutomatik() {
-            const jual = parseFloat(document.getElementById('jual').value) || 0;
-            const fee = parseFloat(document.getElementById('fee').value) || 0;
+            const jualInput = document.getElementById('jual');
+            const feeInput = document.getElementById('fee');
             
-            // Tunjukkan Jumlah Fee
+            const jual = parseFloat(jualInput.value) || 0;
+
+            // Jika user tengah fokus/taip dekat kotak 'Harga Jual', auto-calculate 2.5% masuk kotak fee
+            if (document.activeElement === jualInput && jual > 0) {
+                const autoFee = jual * 0.025; // Formula 2.5%
+                feeInput.value = autoFee.toFixed(2);
+            }
+
+            // Ambil amaun akhir dari kotak fee
+            const fee = parseFloat(feeInput.value) || 0;
+            
+            // Tunjukkan Nilai Dekat Kad Info Bawah
             document.getElementById('liveJumlahFee').innerText = "RM " + fee.toFixed(2);
-            
-            // Untung Bersih dihitung daripada Fee Servis
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
@@ -189,7 +199,7 @@
 
                 alert("Transaksi Berjaya Disimpan!");
                 document.getElementById('recordForm').reset();
-                kiraAutomatik(); // Reset semula info live kad
+                kiraAutomatik(); // Reset live info kad
             } catch (error) {
                 alert("Gagal menyimpan rekod: " + error.message);
             } finally {
