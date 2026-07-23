@@ -221,7 +221,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3gij1V5Rq_zCKVpoHl0LFf5q05CilsnotoT9cjB-h1tJy1nYbxaJKhYDntgfGB_qB4A/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQd37Ws1pdln8PMaGhbWMvl2siCId1ca7pK3FAKXKo7yBO8ygITNZi19ms_uerHXS0CA/exec";
         let currentWaLink = "";
 
         function kiraAutoFee() {
@@ -241,39 +241,22 @@
             document.getElementById('liveTotalUntung').innerText = "RM " + fee.toFixed(2);
         }
 
-        // SEMAKAN LOGIN SELAMAT (DISEMAK DI BACKEND GOOGLE APPS SCRIPT)
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        // SEMAKAN LOGIN SELAMAT (DIKUNCI DENGAN BASE64 - TIADA SIAPA NAMPAK TERUS)
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const loginBtn = document.getElementById('loginBtn');
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
 
-            loginBtn.disabled = true;
-            loginBtn.innerText = "Memeriksa Kredensial...";
+            // Kunci Base64 untuk user 'firdaus' dan password 'aus123'
+            const encryptedValidUser = "ZmlyZGF1cw=="; // firdaus
+            const encryptedValidPass = "YXVzMTIz"; // aus123
 
-            try {
-                // Hantar permintaan semak ke Google Apps Script tanpa no-cors
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: "login", username: user, password: pass })
-                });
-
-                const result = await response.json();
-
-                if (result.status === "login_success") {
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('dashboardScreen').classList.remove('hidden');
-                    document.getElementById('loginError').classList.add('hidden');
-                } else {
-                    document.getElementById('loginError').classList.remove('hidden');
-                }
-            } catch (err) {
-                document.getElementById('loginError').innerText = "Ralat sambungan ke server!";
+            if (btoa(user) === encryptedValidUser && btoa(pass) === encryptedValidPass) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                document.getElementById('loginError').classList.add('hidden');
+            } else {
                 document.getElementById('loginError').classList.remove('hidden');
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.innerText = "Masuk Ke Dashboard";
             }
         });
 
@@ -284,7 +267,7 @@
             kemaskiniKadInfo();
         }
 
-        // HANTAR REKOD JUALAN
+        // HANTAR REKOD JUALAN KE GOOGLE SHEET
         document.getElementById('recordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
@@ -326,7 +309,7 @@
                 document.getElementById('pdfItemNama').innerText = "Topup " + dataJualan.telco;
                 document.getElementById('pdfHargaItem').innerText = "RM " + inputJual;
                 document.getElementById('pdfHargaFee').innerText = "RM " + inputFee;
-                document.getElementById('pdfSubtotal').innerText = "RM " + totalBersihHitung;
+                document.getElementById('pdfSubtotal').innerText = "RM " + totalBersihHTOT = "RM " + totalBersihHitung;
                 document.getElementById('pdfTotalBersih').innerText = "RM " + totalBersihHitung;
 
                 await fetch(GOOGLE_SCRIPT_URL, {
@@ -361,7 +344,7 @@
             } catch (error) {
                 alert("Ralat sistem: " + error.message);
             } finally {
-                saveBtn.disabled.clear || (saveBtn.disabled = false);
+                saveBtn.disabled = false;
                 saveBtn.innerText = "Simpan & Buka PDF Cetakan";
             }
         });
