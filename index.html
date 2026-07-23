@@ -9,7 +9,7 @@
         body { background-color: #0d1117; }
     </style>
 </head>
-<body class="text-gray-200 font-sans flex flex-col min-h-screen justify-between items-center p-6">
+<body class="text-gray-200 font-sans flex flex-col min-h-screen justify-between items-center p-6 relative">
 
     <!-- Header -->
     <header class="text-center mt-6 space-y-2">
@@ -130,17 +130,31 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2 bg-[#1f293d] border border-blue-900 rounded-lg p-3">
-                    <input type="checkbox" id="auto_wa" checked class="w-4 h-4 accent-emerald-500 cursor-pointer">
-                    <label for="auto_wa" class="text-xs text-gray-300 select-none cursor-pointer font-medium">Auto hantar resit rasmi ke WhatsApp Customer selepas simpan</label>
-                </div>
-
                 <button type="submit" id="saveBtn" class="w-full mt-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-gray-950 font-bold py-3 rounded-lg hover:from-emerald-400 hover:to-teal-500 transition-all shadow-lg">
                     Simpan Transaksi
                 </button>
             </form>
         </div>
     </main>
+
+    <!-- POPUP MODAL NOTIFIKASI JUALAN & WHATSAPP -->
+    <div id="waModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-[#161b22] border border-emerald-800 w-full max-w-sm rounded-2xl p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-12 h-12 bg-emerald-950 border border-emerald-500 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-xl font-bold">✓</div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-100">Transaksi Berjaya Disimpan!</h3>
+                <p class="text-xs text-gray-400 mt-1">Data telah dimasukkan ke Google Sheets</p>
+            </div>
+            <div class="pt-2 space-y-2">
+                <button onclick="bukaWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg">
+                    <span>Hantar Resit Ke WhatsApp</span>
+                </button>
+                <button onclick="tutupModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold py-2 rounded-lg transition-all">
+                    Tutup & Teruskan Jualan Baru
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="text-center text-xs text-gray-600 mt-6 space-y-1">
@@ -152,6 +166,9 @@
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrWNhG31dpY8SpMnaBuHLz2awzlbO_CuIzeKgcpK96khm7JlxpSurpewqY5nlU5EkdNA/exec";
         const SYSTEM_USER = "admin";
         const SYSTEM_PASS = "123456"; 
+
+        // Variable global untuk simpan link whatsapp sementara
+        let currentWaLink = "";
 
         function kiraAutoFee() {
             const jual = parseFloat(document.getElementById('jual').value) || 0;
@@ -195,16 +212,15 @@
             kemaskiniKadInfo();
         }
 
-        // Handle Hantar Data ke Google Sheets + WhatsApp
+        // Handle Hantar Data ke Google Sheets + Siapkan Link WhatsApp
         document.getElementById('recordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
             
-            // Format input phone nombor biar standard ada 60 kat depan
             let rawPhone = document.getElementById('whatsapp_no').value.trim();
             if(rawPhone.startsWith('0')) {
                 rawPhone = '60' + rawPhone.substring(1);
-            } else if(!rawPhone.startsWith('60')) {
+            } else if(!rawPhone.startsWith('60') && rawPhone !== "") {
                 rawPhone = '60' + rawPhone;
             }
 
@@ -223,7 +239,6 @@
             const inputFee = parseFloat(dataJualan.fee).toFixed(2);
             const inputTelco = dataJualan.telco;
             const inputBank = dataJualan.bank;
-            const isAutoWa = document.getElementById('auto_wa').checked;
 
             saveBtn.disabled = true;
             saveBtn.innerText = "Menyimpan ke Google Sheets...";
@@ -236,15 +251,11 @@
                     body: JSON.stringify(dataJualan)
                 });
 
-                alert("Transaksi Berjaya Disimpan!");
-
-                // LOGIK AUTO WHATSAPP RESIT
-                if(isAutoWa && rawPhone !== "") {
-                    // Dapatkan tarikh harini format dd/mm/yyyy
+                // RANGKA TEKS RESIT WHATSAPP
+                if(rawPhone !== "") {
                     const hIni = new Date();
                     const tkh = ("0" + hIni.getDate()).slice(-2) + "/" + ("0" + (hIni.getMonth() + 1)).slice(-2) + "/" + hIni.getFullYear();
 
-                    // Rangka Teks Resit Kemas & Profesional
                     const mesejWA = 
 `*RESIT RASMI TRANSAKSI*
 *AF ASCEND TRADING*
@@ -266,16 +277,19 @@ ___________________________
 
 Terima kasih kerana berurusan dengan AF Ascend Trading! Sila simpan resit ringkas ini untuk rujukan masa hadapan.`;
 
-                    // Encode teks ke format URL
                     const urlMesej = encodeURIComponent(mesejWA);
-                    const waLink = `https://api.whatsapp.com/send?phone=${rawPhone}&text=${urlMesej}`;
-                    
-                    // Buka WhatsApp Web/App secara auto
-                    window.open(waLink, '_blank');
+                    currentWaLink = `https://api.whatsapp.com/send?phone=${rawPhone}&text=${urlMesej}`;
+                } else {
+                    currentWaLink = "";
                 }
 
+                // TAMPILKAN MODAL POPUP HIASAN BARU
+                document.getElementById('waModal').classList.remove('hidden');
+
+                // Reset borang utama siap-siap
                 document.getElementById('recordForm').reset();
                 kemaskiniKadInfo();
+
             } catch (error) {
                 alert("Gagal menyimpan rekod: " + error.message);
             } finally {
@@ -283,6 +297,20 @@ Terima kasih kerana berurusan dengan AF Ascend Trading! Sila simpan resit ringka
                 saveBtn.innerText = "Simpan Transaksi";
             }
         });
+
+        // Fungsi buka tab whatsapp secara manual (Diluluskan oleh browser!)
+        function bukaWhatsApp() {
+            if(currentWaLink !== "") {
+                window.open(currentWaLink, '_blank');
+            } else {
+                alert("Nombor WhatsApp pelanggan tidak sah atau kosong.");
+            }
+        }
+
+        function tutupModal() {
+            document.getElementById('waModal').classList.add('hidden');
+            currentWaLink = "";
+        }
     </script>
 </body>
 </html>
