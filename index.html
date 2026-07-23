@@ -8,16 +8,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body { background-color: #0d1117; }
+
+
+        
         #premiumPrintReceipt {
             background-color: #ffffff !important;
             color: #1a202c !important;
             font-family: 'Courier New', Courier, monospace, sans-serif;
             padding: 20px !important;
             box-sizing: border-box;
-            width: 100%;
-            max-width: 500px;
+            width: 450px !important;
             margin: 0 auto;
-        }
+    }
+
+
+
+        
         .flex-print { display: flex !important; justify-content: space-between !important; align-items: center !important; }
         .table-print { display: table !important; width: 100% !important; }
         .tr-print { display: table-row !important; }
@@ -353,11 +359,11 @@
 
                 const elementResit = document.getElementById('premiumPrintReceipt');
                 const opsi = {
-                    margin:       0,
+                    margin:       0.5,
                     filename:     namaFail,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 450 },
-                    jsPDF:        { unit: 'mm', format: [80, 180], orientation: 'portrait' }
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
                 };
                 
                 await html2pdf().set(opsi).from(elementResit).save();
