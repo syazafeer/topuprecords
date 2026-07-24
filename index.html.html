@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pengurusan Jualan - AF Ascend Trading</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Container Utama -->
+    <div class="bg-white shadow-lg rounded-xl w-full max-w-2xl p-6 md:p-8">
+        <h1 class="text-2xl font-bold text-slate-800 mb-6 text-center">Sistem Rekod Jualan</h1>
+
+        <!-- Form Jualan -->
+        <form id="salesForm" class="space-y-4">
+            
+            <!-- Nama & WhatsApp -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Pelanggan</label>
+                    <input type="text" id="nama" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">No WhatsApp</label>
+                    <input type="text" id="whatsapp" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="601xxxxxxxx">
+                </div>
+            </div>
+
+            <!-- Telco & Dominasi -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Telco / Produk</label>
+                    <input type="text" id="telco" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Dominasi & Qty</label>
+                    <input type="text" id="dominasi" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Senarai No PIN -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Senarai No PIN</label>
+                <textarea id="pins" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+
+            <!-- Cara Bayar & Bank -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Cara Bayar</label>
+                    <input type="text" id="pembayaran" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Bank Masuk</label>
+                    <input type="text" id="bank" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- No Resit & Nilai Jual -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">No Resit / Ref</label>
+                    <input type="text" id="resit" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Nilai Jual (RM)</label>
+                    <input type="number" step="0.01" id="jual" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Fee & Caj Merchant -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Fee Customer (RM)</label>
+                    <input type="number" step="0.01" id="fee" value="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Caj Merchant (RM)</label>
+                    <input type="number" step="0.01" id="merchant_cost" value="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Untung Bersih (RM)</label>
+                    <input type="number" step="0.01" id="net_profit" value="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 font-bold text-green-600" readonly>
+                </div>
+            </div>
+
+            <!-- Butang Submit -->
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200 mt-4">
+                Hantar & Simpan Rekod
+            </button>
+        </form>
+
+        <!-- Status Mesej -->
+        <div id="statusMsg" class="mt-4 text-center text-sm font-medium"></div>
+    </div>
+
+    <!-- Script Pengiraan & Hantaran Data -->
+    <script>
+        // TUKAR URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxV0PwB2GksOC48FEN4ZG1i1SqU0-4zlvq3Ll9b66lozGY2TIGo9v2T1sbWPS-LReZy_w/exec";
+
+        // Kira Untung Bersih Automatik
+        const jualInput = document.getElementById('jual');
+        const feeInput = document.getElementById('fee');
+        const merchantInput = document.getElementById('merchant_cost');
+        const netProfitInput = document.getElementById('net_profit');
+
+        function kiraUntung() {
+            let jual = parseFloat(jualInput.value) || 0;
+            let fee = parseFloat(feeInput.value) || 0;
+            let merchant = parseFloat(merchantInput.value) || 0;
+            
+            // Formula untung bersih (ubah ikut kesesuaian formula anda)
+            let bersih = (jual + fee) - merchant;
+            netProfitInput.value = bersih.toFixed(2);
+        }
+
+        jualInput.addEventListener('input', kiraUntung);
+        feeInput.addEventListener('input', kiraUntung);
+        merchantInput.addEventListener('input', kiraUntung);
+
+        // Hantar Data ke Google Apps Script
+        document.getElementById('salesForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusMsg = document.getElementById('statusMsg');
+            
+            btn.disabled = true;
+            btn.textContent = "Sedang menghantar...";
+            statusMsg.textContent = "";
+
+            const dataJualan = {
+                action: "simpan",
+                nama: document.getElementById('nama').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                telco: document.getElementById('telco').value,
+                dominasi: document.getElementById('dominasi').value,
+                pins: document.getElementById('pins').value,
+                pembayaran: document.getElementById('pembayaran').value,
+                bank: document.getElementById('bank').value,
+                resit: document.getElementById('resit').value,
+                jual: parseFloat(jualInput.value) || 0,
+                fee: parseFloat(feeInput.value) || 0,
+                merchant_cost: parseFloat(merchantInput.value) || 0,
+                net_profit: parseFloat(netProfitInput.value) || 0
+            };
+
+            try {
+                // Hantar menggunakan fetch biasa (Tanpa mode: 'no-cors' supaya data boleh masuk)
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(dataJualan)
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    statusMsg.className = "mt-4 text-center text-sm font-medium text-green-600";
+                    statusMsg.textContent = "Berjaya! Rekod telah dimasukkan ke Google Sheet.";
+                    document.getElementById('salesForm').reset();
+                    netProfitInput.value = "0.00";
+                } else {
+                    throw new Error(result.message || "Gagal menyimpan.");
+                }
+            } catch (error) {
+                statusMsg.className = "mt-4 text-center text-sm font-medium text-red-600";
+                statusMsg.textContent = "Ralat: " + error.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Hantar & Simpan Rekod";
+            }
+        });
+    </script>
+</body>
+</html>
