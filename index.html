@@ -122,7 +122,8 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-amber-300 uppercase mb-1">Modal (RM)</label>
-                        <input type="number" step="0.01" id="modal" readonly class="w-full bg-[#0d1117] border border-gray-800 rounded-lg px-4 py-2 text-sm text-gray-400 cursor-not-allowed" title="Modal diselaraskan sama mengikut harga produk/jual">
+                        <!-- Ubah: Dibenarkan edit secara manual, auto-update bila senarai dominasi berubah -->
+                        <input type="number" step="0.01" id="modal" required class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-100 focus:border-amber-500 focus:outline-none" oninput="kemaskiniKadInfo()">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Fee Servis (RM)</label>
@@ -189,7 +190,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW818f15hFPt_UNmmjHW35MEu5S79gCE6RvA9SNx8ZnM2rPhLyXDVxf7o9h3r4sXC4vA/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwB3ZF60W3h-ItgyfDdqlnWlETaumhcmV9sV1dDn86O7Klpljymi9O1kGgBKIMQGcFuXQ/exec";
         let currentWaLink = "";
         let dataTerakhir = {};
 
@@ -254,8 +255,10 @@
                 totalKuantitiKeseluruhan += qty;
             });
 
-            // Set Nilai Jual dan Modal sama mengikut harga produk
+            // Set Nilai Jual
             document.getElementById('jual').value = totalJualKeseluruhan.toFixed(2);
+            
+            // Auto-set modal mengikut harga jual pada permulaan, tapi masih boleh diubah manual selepas itu
             document.getElementById('modal').value = totalJualKeseluruhan.toFixed(2);
 
             let feeInput = document.getElementById('fee');
@@ -271,8 +274,8 @@
         function kemaskiniKadInfo() {
             const jual = parseFloat(document.getElementById('jual').value) || 0;
             const modal = parseFloat(document.getElementById('modal').value) || 0;
-            const fee = parseFloat(document.getElementById('fee').value) || 0; // Untung dari fee pelanggan
-            const merchant = parseFloat(document.getElementById('merchant_cost').value) || 0; // Caj MDR
+            const fee = parseFloat(document.getElementById('fee').value) || 0; 
+            const merchant = parseFloat(document.getElementById('merchant_cost').value) || 0; 
             
             // Formula Untung Bersih: (Nilai Jual + Fee Pelanggan) - (Modal + Caj MDR)
             const untungBersih = (jual + fee) - (modal + merchant);
