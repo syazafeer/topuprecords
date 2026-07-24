@@ -114,11 +114,15 @@
                     </div>
                 </div>
 
-                <!-- KOTAK KIRAAN, FEE & MDR -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- KOTAK KIRAAN, FEE, MODAL & MDR -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-xs text-gray-400 uppercase mb-1">Nilai Jual (RM)</label>
                         <input type="number" step="0.01" id="jual" readonly class="w-full bg-[#0d1117] border border-gray-800 rounded-lg px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-amber-300 uppercase mb-1">Modal (RM)</label>
+                        <input type="number" step="0.01" id="modal" readonly class="w-full bg-[#0d1117] border border-gray-800 rounded-lg px-4 py-2 text-sm text-gray-400 cursor-not-allowed" title="Modal diselaraskan sama mengikut harga produk/jual">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Fee Servis (RM)</label>
@@ -185,7 +189,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQ3VDMpNBim0CtEnqa83YesSWSTapfOajm6BZso6HBF5wJUNTY7WerOE4QcEx-D_kBMA/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW818f15hFPt_UNmmjHW35MEu5S79gCE6RvA9SNx8ZnM2rPhLyXDVxf7o9h3r4sXC4vA/exec";
         let currentWaLink = "";
         let dataTerakhir = {};
 
@@ -250,7 +254,10 @@
                 totalKuantitiKeseluruhan += qty;
             });
 
+            // Set Nilai Jual dan Modal sama mengikut harga produk
             document.getElementById('jual').value = totalJualKeseluruhan.toFixed(2);
+            document.getElementById('modal').value = totalJualKeseluruhan.toFixed(2);
+
             let feeInput = document.getElementById('fee');
             feeInput.value = (totalJualKeseluruhan * 0.025).toFixed(2);
             
@@ -263,10 +270,12 @@
 
         function kemaskiniKadInfo() {
             const jual = parseFloat(document.getElementById('jual').value) || 0;
-            const fee = parseFloat(document.getElementById('fee').value) || 0;
-            const merchant = parseFloat(document.getElementById('merchant_cost').value) || 0;
+            const modal = parseFloat(document.getElementById('modal').value) || 0;
+            const fee = parseFloat(document.getElementById('fee').value) || 0; // Untung dari fee pelanggan
+            const merchant = parseFloat(document.getElementById('merchant_cost').value) || 0; // Caj MDR
             
-            const untungBersih = (jual + fee) - merchant;
+            // Formula Untung Bersih: (Nilai Jual + Fee Pelanggan) - (Modal + Caj MDR)
+            const untungBersih = (jual + fee) - (modal + merchant);
 
             document.getElementById('liveJumlahFee').innerText = "RM " + fee.toFixed(2);
             document.getElementById('liveTotalUntung').innerText = "RM " + untungBersih.toFixed(2);
@@ -409,9 +418,12 @@
             });
 
             const inputJual = parseFloat(document.getElementById('jual').value).toFixed(2);
+            const inputModal = parseFloat(document.getElementById('modal').value).toFixed(2);
             const inputFee = parseFloat(document.getElementById('fee').value).toFixed(2);
             const inputMerchant = parseFloat(document.getElementById('merchant_cost').value).toFixed(2);
-            const netProfitValue = ((parseFloat(inputJual) + parseFloat(inputFee)) - parseFloat(inputMerchant)).toFixed(2);
+            
+            // Pengiraan Net Profit: (Jual + Fee) - (Modal + Merchant)
+            const netProfitValue = ((parseFloat(inputJual) + parseFloat(inputFee)) - (parseFloat(inputModal) + parseFloat(inputMerchant))).toFixed(2);
 
             const hIni = new Date();
             const tkh = ("0" + hIni.getDate()).slice(-2) + "/" + ("0" + (hIni.getMonth() + 1)).slice(-2) + "/" + hIni.getFullYear();
@@ -426,6 +438,7 @@
                 pembayaran: document.getElementById('pembayaran').value + " (" + document.getElementById('bank').value + ")",
                 ref: document.getElementById('resit').value || "-",
                 jual: "RM " + inputJual,
+                modal: "RM " + inputModal,
                 fee: "RM " + inputFee,
                 merchant: "RM " + inputMerchant,
                 net_profit: "RM " + netProfitValue,
@@ -444,6 +457,7 @@
                 bank: document.getElementById('bank').value,
                 resit: document.getElementById('resit').value || "-",
                 jual: inputJual,
+                modal: inputModal,
                 fee: inputFee,
                 merchant_cost: inputMerchant,
                 net_profit: netProfitValue
