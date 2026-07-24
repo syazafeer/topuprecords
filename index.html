@@ -185,7 +185,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbxu87zWgW823dsjQfGpCyVY3tf9r3wMoDb8mBNzCAuSTzt20fFRD3fcLyihmUio6RrIMg/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTSB5zrXG-KLtW9-uKd56SYQ42ounAq_5g59egiTh_wyIF7cEcCogjif32kL3L3L4XKg/exec";
         let currentWaLink = "";
         let dataTerakhir = {};
 
@@ -254,7 +254,6 @@
             let feeInput = document.getElementById('fee');
             feeInput.value = (totalJualKeseluruhan * 0.025).toFixed(2);
             
-            // Set default MDR: RM 0.50 setiap kuantiti dominasi
             let merchantInput = document.getElementById('merchant_cost');
             merchantInput.value = (totalKuantitiKeseluruhan * 0.50).toFixed(2);
 
@@ -267,7 +266,6 @@
             const fee = parseFloat(document.getElementById('fee').value) || 0;
             const merchant = parseFloat(document.getElementById('merchant_cost').value) || 0;
             
-            // Formula Untung Bersih = (Nilai Jual + Fee) - Caj Merchant (MDR)
             const untungBersih = (jual + fee) - merchant;
 
             document.getElementById('liveJumlahFee').innerText = "RM " + fee.toFixed(2);
@@ -322,7 +320,8 @@
             tambahBarisDominasi(10, 1);
         };
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Semakan login melalui backend (Google Apps Script)
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
@@ -333,17 +332,32 @@
             loginBtn.innerText = "Memeriksa...";
             loginError.classList.add('hidden');
 
-            setTimeout(() => {
-                if (user === "firdaus" && pass === "aus123") {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "login",
+                        username: user,
+                        password: pass
+                    })
+                });
+                
+                const result = await response.json();
+
+                if (result.status === "success") {
                     document.getElementById('loginScreen').classList.add('hidden');
                     document.getElementById('dashboardScreen').classList.remove('hidden');
                     loginError.classList.add('hidden');
                 } else {
                     loginError.classList.remove('hidden');
                 }
+            } catch (error) {
+                loginError.innerText = "Ralat sambungan ke server!";
+                loginError.classList.remove('hidden');
+            } finally {
                 loginBtn.disabled = false;
                 loginBtn.innerText = "Masuk Ke Dashboard";
-            }, 400);
+            }
         });
 
         function logout() {
@@ -439,8 +453,7 @@
             saveBtn.innerText = "Menyimpan Rekod...";
 
             try {
-                // HANTAR DATA KE GOOGLE SHEET
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(dataJualan)
                 });
@@ -459,7 +472,6 @@
                 tambahBarisDominasi(10, 1);
 
             } catch (error) {
-                // Papar modal walaupun sekiranya terdapat sekatan CORS pelayar
                 document.getElementById('waModal').classList.remove('hidden');
                 document.getElementById('recordForm').reset();
                 document.getElementById('wrapperSenaraiDominasi').innerHTML = "";
@@ -546,12 +558,13 @@
         }
 
         function bukaWhatsApp() {
-            if(currentWaLink !== "") window.open(currentWaLink, '_blank');
+            if(currentWaLink !== "") {
+                window.open(currentWaLink, '_blank');
+            }
         }
 
         function tutupModal() {
             document.getElementById('waModal').classList.add('hidden');
-            currentWaLink = "";
         }
     </script>
 </body>
